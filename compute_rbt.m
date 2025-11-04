@@ -10,5 +10,12 @@
 %Plist_world: a 2 x n matrix of points describing
 %the world-frame coordinates of the points in Plist_box
 function Plist_world = compute_rbt(x,y,theta,Plist_box)
-% your code here
+    %x positions = centroid + Pboxxcos(theta) + Pboxysin(theta)
+    
+    Plist_world = zeros(size(Plist_box));
+    for i = 1:length(Plist_box)
+        Plist_world(1, i) = x + Plist_box(1, i)*cos(theta) - Plist_box(2,i)*sin(theta);
+        Plist_world(2, i) = y + Plist_box(1, i)*sin(theta) + Plist_box(2,i)*cos(theta);
+    end
+        
 end
