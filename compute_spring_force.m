@@ -6,7 +6,7 @@
 %l0: the natural length of the spring
 %OUTPUTS:
 %F: the force exerted by the spring at end B
-    function F = compute_spring_force(k,l0,PA,PB)
+function F = compute_spring_force(k,l0,PA,PB)
     %current length of the spring
     l = norm(PB - PA);
     %unit vector pointing from PA to PB
