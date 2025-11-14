@@ -32,11 +32,31 @@ function [ax,ay,atheta] = compute_accel(x,y,theta,box_params)
     a_linear = [0; -g];
     atheta = 0;
 
+    %initialize totals
+    Fx_total = 0;
+    Fy_total = 0;
+    torque_total = 0;
+
+    Plist_world = compute_rbt(x,y,theta,P_box);
+
     for spring = 1:num_springs
-        F = compute_spring_force(k_list(spring), l0_list(spring), P_box(:,spring), P_world(:,spring)); 
-        % TODO do something with rotation to transform F into a vector
-        a_linear = a_linear + F/m;
-        % TODO do the same for angular acceleration
-        % atheta = atheta + F/I * other stuff
+        Pw = P_world(:,spring); %fixed point in environment
+        Pb = Plist_world(:,spring); %fixed point on box
+        l = norm(Pb-Pw); %current spring length
+        e_s = (Pb-Pw)/1; %unit vector from Pw to Pb
+        F_i = -boxparams.k_list(num_springs) * (l - l0_list(num_springs)) * e_s;
+        Fx_total = Fx_total + Fi(1); %add the sum of all forces acting in the x direction
+        Fy_total = Fy_total + Fi(2); %add the sum of all forces acting in the y direction
+
+        r_i = Pb - [x; y]; %position vector from centroid
+        torque_i = r_i(1)*F_i(2) - r_i(2)*F_i(1); %2d cross product
+        torque_total = torque_total + torque_i; %add sum of all torque
     end
+
+    Fy_total = Fy_total - m * g; %add gravity
+
+    %Compute acceleration
+    ax = Fx_total/m;
+    ay = Fy_total/m;
+    atheta = torque_total/I;
 end
