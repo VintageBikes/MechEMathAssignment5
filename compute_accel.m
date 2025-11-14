@@ -36,7 +36,7 @@ function [ax,ay,atheta] = compute_accel(x,y,theta,box_params)
     for spring = 1:num_springs
         F = compute_spring_force(k_list(spring), l0_list(spring), P_box(:,spring), P_world(:,spring)); 
         % TODO do something with rotation to transform F into a vector
-        a_linear = a_linear + F;
+        a_linear = a_linear + F/m;
         % TODO do the same for angular acceleration
         % atheta = atheta + F/I * other stuff
     end
