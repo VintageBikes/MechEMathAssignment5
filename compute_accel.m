@@ -28,11 +28,10 @@ function [ax,ay,atheta] = compute_accel(x,y,theta,box_params)
     l0_list = box_params.l0_list;
     P_world = box_params.P_world;
     P_box = box_params.P_box;
-
     num_springs = length(k_list);
-    
-    a_linear = [0; g];
+    a_linear = [0; -g];
     atheta = 0;
+
     for spring = 1:num_springs
         F = compute_spring_force(k_list(spring), l0_list(spring), P_box(:,spring), P_world(:,spring)); 
         % TODO do something with rotation to transform F into a vector
