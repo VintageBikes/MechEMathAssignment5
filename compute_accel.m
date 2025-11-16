@@ -27,7 +27,7 @@ function [ax,ay,atheta] = compute_accel(x,y,theta,box_params)
     k_list = box_params.k_list;
     l0_list = box_params.l0_list;
     P_world = box_params.P_world;
-    P_box = box_params.P_box;
+    P_box = box_params.P_box
     num_springs = length(k_list);
     a_linear = [0; -g];
     atheta = 0;
@@ -37,16 +37,16 @@ function [ax,ay,atheta] = compute_accel(x,y,theta,box_params)
     Fy_total = 0;
     torque_total = 0;
 
-    Plist_world = compute_rbt(x,y,theta,P_box);
+    Plist_world = compute_rbt(x,y,theta,P_box)
 
     for spring = 1:num_springs
         Pw = P_world(:,spring); %fixed point in environment
         Pb = Plist_world(:,spring); %fixed point on box
         l = norm(Pb-Pw); %current spring length
         e_s = (Pb-Pw)/1; %unit vector from Pw to Pb
-        F_i = -boxparams.k_list(num_springs) * (l - l0_list(num_springs)) * e_s;
-        Fx_total = Fx_total + Fi(1); %add the sum of all forces acting in the x direction
-        Fy_total = Fy_total + Fi(2); %add the sum of all forces acting in the y direction
+        F_i = -k_list(num_springs) * (l - l0_list(num_springs)) * e_s;
+        Fx_total = Fx_total + F_i(1); %add the sum of all forces acting in the x direction
+        Fy_total = Fy_total + F_i(2); %add the sum of all forces acting in the y direction
 
         r_i = Pb - [x; y]; %position vector from centroid
         torque_i = r_i(1)*F_i(2) - r_i(2)*F_i(1); %2d cross product
