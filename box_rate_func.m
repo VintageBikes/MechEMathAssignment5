@@ -21,7 +21,7 @@
 function dVdt = box_rate_func(t,V,box_params)
     x = V(1);
     y = V(2);
-    theta(3);
+    theta = V(3);
     dxdt = V(4);
     dydt = V(5);
     dthetadt = V(6);
