@@ -15,7 +15,7 @@ function simulate_box()
     my_rate_func = @(t_in,V_in) box_rate_func(t_in,V_in,box_params);
     x0 = -0.1;
     y0 = -0.11;
-    theta0 = 0.01;
+    theta0 = 0.5;
     vx0 = 0;
     vy0 = 0;
     vtheta0 = 0;
@@ -23,7 +23,7 @@ function simulate_box()
     tspan = [0 10];
     
     %run the integration
-    [tlist,Vlist] = ode45(my_rate_func,tspan,V0)
+    [tlist,Vlist] = ode45(my_rate_func,tspan,V0);
 
     plot(tlist, Vlist(:, 1), 'r')
     hold on;
@@ -46,10 +46,10 @@ function simulate_box()
         x = Vlist(t,1); 
         y = Vlist(t,2);
         theta = Vlist(t,3);
-    
+        %make into world frame :)
         R = [cos(theta), -sin(theta); sin(theta), cos(theta)];
         P_world = R * P_box + [x; y]; 
-        P_plot = [P_world, P_world(:,1)];
+        P_plot = [P_world, P_world(:,1)]; %box not u
     
         set(square_plot,'XData',P_plot(1,:),'YData',P_plot(2,:));
         drawnow
