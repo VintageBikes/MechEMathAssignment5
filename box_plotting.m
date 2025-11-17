@@ -3,26 +3,32 @@ function box_plotting(Vlist, P_world, P_box)
     num_zigs = 5;
     w = .1;
     num_springs = length(P_world(1, :));
-
-    hold on;
     
+    figure
+    hold on
+    axis equal; axis square;
+    axis([-3 3 -3 3])   % adjust to your scene
+
+    % initialize square plot
+    square_plot = plot(NaN, NaN, 'k-', 'LineWidth', 2);
     springs = repmat(struct('zig_zag',[], 'line_plot',plot(0,0), 'point_plot',plot(0,0)), 1, num_springs);   % 1xN struct array with fields a and b
 
     for i = 1:num_springs
         springs(i) = initialize_spring_plot(num_zigs,w);
     end
 
-    axis equal; axis square;
-    axis([-3,3,-3,3]);
     for step=1:length(Vlist)
         P_box_world = compute_rbt(Vlist(step,1), Vlist(step,2), Vlist(step,3), P_box);
+        % plot box
+        P_plot = [P_box_world, P_box_world(:,1)];
+        set(square_plot,'XData',P_plot(1,:),'YData',P_plot(2,:));
+        % plot springs
         for spring=1:num_springs
             P1 = P_world(:, spring);
             P2 = P_box_world(:, spring);
             update_spring_plot(springs(spring),P1,P2)
         end
         drawnow;
-        pause(0.1)
     end
 end
 
