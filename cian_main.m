@@ -1,20 +1,49 @@
 close all;
 clc;
 
-x = 5;
-y = 5;
-theta = pi/6;
-Plist_box = [1, -1, -1, 1; 1, 1, -1, -1];
+%define system parameters
+box_params = struct();
+box_params.m = 0.1; %kg
+box_params.I = 1; %kg m^2
+box_params.g = 9.81; %m/s^2
+box_params.k_list = [50, 50, 50, 50];
+box_params.l0_list = [1, 1, 2, 1];
+box_params.P_world = [2, -2, -2, 2; 2, 2, -2, -2];
+box_params.P_box = [1, -1, -1, 1; 1, 1, -1, -1];
+
+% find V_eq
+rate_func = @(V_in) box_rate_func(0,V_in,box_params);
+[V_eq, exit_flag] = multi_newton_solver(rate_func, [0; 0; 0; 0; 0; 0], struct());
+
+% starting values
+x0 = 2;
+y0 = -1;
+%theta0 = deg2rad(mod(rad2deg(48.7975), 360));
+theta0 = 48;
+vx0 = 0;
+vy0 = 0;
+vtheta0 = 0;
+V0 = [x0;y0;theta0;vx0;vy0;vtheta0];
+%V0 = V_eq;
+
+% tspan
+tspan = [0 10];
+
+% simulate box
+[tlist, Vlist] = simulate_box(V_eq, tspan, box_params);
+
+% positions over time
+figure();
+plot(tlist, Vlist(:, 1), 'r')
+hold on;
+plot(tlist, Vlist(:, 2), 'b')
+plot(tlist, Vlist(:, 3), 'k')
+length(tlist)
+
+% box animation
+box_plotting(Vlist, box_params.P_world, box_params.P_box)
 
 
-Plist_world = compute_rbt(x,y,theta,Plist_box);
+linear_rate = @(t_in,V_in) approximate_jacobian*(V_in-V_eq);
 
-plot(Plist_world(1,:), Plist_world(2,:))
 
-k = 1;
-l0 = 1;
-PA = [0,0];
-PB = [0,2];
-
-grid on
-axis equal
