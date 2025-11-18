@@ -32,7 +32,6 @@ function [ax, ay, atheta] = compute_accel(x, y, theta, box_params)
     
     % transform box points into world frame
     P_box_world = compute_rbt(x, y, theta, P_box);
-    P_list_world = compute_rbt(x, y, theta, P_box);
 
     num_springs = length(k_list);
 
@@ -42,14 +41,14 @@ function [ax, ay, atheta] = compute_accel(x, y, theta, box_params)
 
     for spring = 1:num_springs
         Pw = P_world_fixed(:, spring);   % fixed world anchor
-        Pb = P_list_world(:, spring);     % box point in world frame
+        Pb = P_box_world(:, spring);     % box point in world frame
         
         d = Pb - Pw; 
         l = norm(d);  
         e_s = d / l;                     % unit vector from Pw → Pb
         
         % spring force magnitude
-        F_i = k_list(spring) * (l - l0_list(spring)) * e_s;
+        F_i = -k_list(spring) * (l - l0_list(spring)) * e_s;
 
         Fx_total = Fx_total + F_i(1);
         Fy_total = Fy_total + F_i(2);
