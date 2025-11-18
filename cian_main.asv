@@ -1,6 +1,5 @@
 close all;
 clc;
-clear;
 
 %define system parameters
 box_params = struct();
@@ -44,42 +43,40 @@ length(tlist)
 % box animation
 box_plotting(Vlist, box_params.P_world, box_params.P_box)
 
-% Jacobian at eq
-J = approximate_jacobian(@(V) box_rate_func(0,V,box_params), V_eq);
 
-linear_rate = @(t_in,V_in) J*(V_in-V_eq);
+linear_rate = @(t_in,V_in) approximate_jacobian*(V_in-V_eq)\
 
-eps_small = 0.1;
+eps_small = 0.02;
 eps_large = 0.2; 
 
 direction = [1;0;0;0;0;0]; 
 
 % small bumps
 V0_small = V_eq + eps_small*direction;
-[t_nonlin_small, V_nonlin_small] = ode45(@(t,V) box_rate_func(t,V,box_params),tspan, V0_small);
+[t_nonlin_small, V_nonlin_small] = ode45(@(t,V) box_rate_func(t,V,box),tspan, V0_small);
 [t_lin_small, V_lin_small] = ode45(linear_rate, tspan, V0_small);
 
 % large
 V0_large = V_eq + eps_large*direction;
-[t_nonlin_large, V_nonlin_large] = ode45(@(t,V) box_rate_func(t,V,box_params),tspan, V0_large);
+[t_nonlin_large, V_nonlin_large] = ode45(@(t,V) box_rate_func(t,V,box),tspan, V0_large);
 [t_lin_large, V_lin_large] = ode45(linear_rate, tspan, V0_large);
 
 % plot small
 figure; hold on; grid on;
-dx_nonlin_smol = V_nonlin_small(:,1) - V_eq(1);
-dx_lin_smol = V_lin_small(:,1) - V_eq(1);
+dx_nonlin_smol = V_nonlin_small(1,:) - V_eq(1);
+dx_lin_smol = V_lin_small(1,:) - V_eq(1);
 plot(t_nonlin_small, dx_nonlin_smol, 'k-', 'displayname','nonlinear x');
 plot(t_lin_small, dx_lin_smol, 'r--', 'displayname','linear x');
 xlabel('t'); ylabel('\Delta x');
 title('linear vs nonlinear from small perturbation');
 legend('location','best');
 
-% plot large
+% plot large (Δx)
 figure; hold on; grid on;
-dx_nonlin_large = V_nonlin_large(:,1) - V_eq(1);
-dx_lin_large = V_lin_large(:,1) - V_eq(1);
-plot(t_nonlin_large, dx_nonlin_large, 'k-', 'displayname','nonlinear x');
-plot(t_lin_large, dx_lin_large, 'r--', 'displayname','linear x');
+dx_nonlin_large = V_nonlin_lg(1,:) - V_eq(1);
+dx_lin_large = V_li_lg(1,:) - V_eq(1);
+plot(t_nl_lg, dx_nl_L, 'k-', 'displayname','nonlinear x');
+plot(t_li_lg, dx_li_L, 'r--', 'displayname','linear x');
 xlabel('t'); ylabel('\Delta x');
 title('linear vs nonlinear from large perturbation');
 legend('location','best');
