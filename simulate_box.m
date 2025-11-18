@@ -2,9 +2,9 @@ function [tlist, Vlist] = simulate_box(box_params)
     %load the system parameters into the rate function
     %via an anonymous function
     my_rate_func = @(t_in,V_in) box_rate_func(t_in,V_in,box_params);
-    x0 = -0.1;
-    y0 = -0.11;
-    theta0 = 0.5;
+    x0 = .1;
+    y0 = -.20;
+    theta0 = 0;
     vx0 = 0;
     vy0 = 0;
     vtheta0 = 0;
