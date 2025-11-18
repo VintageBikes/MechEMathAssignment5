@@ -48,45 +48,47 @@ rate_func = @(t_in,V_in) box_rate_func(t_in,V_in,box_params);
 linear_rate = @(t_in, V_in) J_approx*(V_in-V_eq);
 
 %small number used to scale initial perturbation
-epsilon = 0.1;
-Vx = V_eq + epsilon*V0;
-
-%run the integration of nonlinear system
-[tlist_nonlinear, Vlist_nonlinear] = ode45(rate_func,tspan,Vx);
-
-%run the integration of linear system
-[tlist_linear, Vlist_linear] = ode45(linear_rate,tspan,Vx);
-
-% positions over time
-figure();
-
-% x(t)
-subplot(3,1,1)
-plot(tlist_nonlinear, Vlist_nonlinear(:, 1), 'LineWidth', 1.5);
-hold on
-plot(tlist_linear, Vlist_linear(:, 1), '--', 'LineWidth', 1.5);
-xlabel('Time (s)')
-ylabel('x (m)')
-title('Comparison of x(t): Nonlinear vs Linear')
-legend('Nonlinear','Linear')
-
-% y(t)
-subplot(3,1,2)
-plot(tlist_nonlinear, Vlist_nonlinear(:, 2), 'LineWidth', 1.5); hold on
-plot(tlist_linear, Vlist_linear(:, 2), '--', 'LineWidth', 1.5);
-xlabel('Time (s)')
-ylabel('y (m)')
-title('Comparison of y(t): Nonlinear vs Linear')
-legend('Nonlinear','Linear')
-
-% theta(t)
-subplot(3,1,3)
-plot(tlist_nonlinear, Vlist_nonlinear(:, 3), 'LineWidth', 1.5); hold on
-plot(tlist_linear, Vlist_linear(:, 3), '--', 'LineWidth', 1.5);
-xlabel('Time (s)')
-ylabel('\theta (rad)')
-title('Comparison of \theta(t): Nonlinear vs Linear')
-legend('Nonlinear','Linear')
+epsilons = [0.02, 0.05, 0.1];
+for i = 1:length(epsilons)
+    Vx = V_eq + epsilons(i)*V0;
+    
+    %run the integration of nonlinear system
+    [tlist_nonlinear, Vlist_nonlinear] = ode45(rate_func,tspan,Vx);
+    
+    %run the integration of linear system
+    [tlist_linear, Vlist_linear] = ode45(linear_rate,tspan,Vx);
+    
+    % positions over time
+    figure();
+    
+    % x(t)
+    subplot(3,1,1)
+    plot(tlist_nonlinear, Vlist_nonlinear(:, 1), 'LineWidth', 1.5);
+    hold on
+    plot(tlist_linear, Vlist_linear(:, 1), '--', 'LineWidth', 1.5);
+    xlabel('Time (s)')
+    ylabel('x (m)')
+    title(['x(t) Comparison, \epsilon=' num2str(epsilons(i))]);
+    legend('Nonlinear','Linear')
+    
+    % y(t)
+    subplot(3,1,2)
+    plot(tlist_nonlinear, Vlist_nonlinear(:, 2), 'LineWidth', 1.5); hold on
+    plot(tlist_linear, Vlist_linear(:, 2), '--', 'LineWidth', 1.5);
+    xlabel('Time (s)')
+    ylabel('y (m)')
+    title(['y(t) Comparison, \epsilon=' num2str(epsilons(i))]);
+    legend('Nonlinear','Linear')
+    
+    % theta(t)
+    subplot(3,1,3)
+    plot(tlist_nonlinear, Vlist_nonlinear(:, 3), 'LineWidth', 1.5); hold on
+    plot(tlist_linear, Vlist_linear(:, 3), '--', 'LineWidth', 1.5);
+    xlabel('Time (s)')
+    ylabel('\theta (rad)')
+    title(['\theta(t) Comparison, \epsilon=' num2str(epsilons(i))]);
+    legend('Nonlinear','Linear')
+end
 
 
 % % Iconic starting parameters
