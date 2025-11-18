@@ -23,4 +23,14 @@ length(tlist)
 
 box_plotting(Vlist, box_params.P_world, box_params.P_box)
 
+solver_params= struct(); % makes structure for parameter values
+solver_params.dxmin = 1e-10; % min step size
+solver_params.ftol = 1e-10 ; %tolerence on function value
+solver_params.dxmax  = 1e8; % max step size
+solver_params.max_iter = 200 ; % max # of iterations
+solver_params.approx = 1; % 1 = use approximate jacobian, 0 = use numerical jacobian
+
+my_rate_func = @(t_in,V_in) box_rate_func(t_in,V_in,box_params);
+eq = multivarate_newton(@box_rate_func, [0,0,0], )
+
 % spring_plotting_example()
